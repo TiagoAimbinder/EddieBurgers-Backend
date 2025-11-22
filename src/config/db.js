@@ -11,6 +11,8 @@ import LogHistoryModel from '../models/LogHistory.model.js';
 import ExpensesModel from '../models/Expenses.model.js';
 import CategoryModel from '../models/Category.model.js'; 
 import SaleHistoryModel from '../models/SaleHistory.model.js';
+import SupplyModel from "../models/Supply.model.js";
+import CategoryXSupplyModel from "../models/CategoryXSupply.model.js";
 
 
 export class Database {
@@ -34,7 +36,7 @@ export class Database {
   sequelizeInit = () => {
     Database.sequelize = new Sequelize(this.DB_DATABASE, this.DB_USER, this.DB_PASSWORD, {
       host: this.DB_HOST,
-      dialect: 'mysql',
+      dialect: 'mssql',
       dialectOptions: {
           options: {
               encrypt: false,
@@ -65,6 +67,8 @@ export class Database {
         Expenses: ExpensesModel(Database.sequelize),
         Category: CategoryModel(Database.sequelize),
         SaleHistory: SaleHistoryModel(Database.sequelize),
+        Supply: SupplyModel(Database.sequelize),
+        CategoryXSupply: CategoryXSupplyModel(Database.sequelize),
       };
     } catch (err) {
       console.error('❌ | Init models', err);
@@ -73,7 +77,7 @@ export class Database {
 
   sequelizeSync = async () => {
     try {
-        await Database.sequelize.sync({ alter: true }); // { alter: true }
+        await Database.sequelize.sync({  }); // { alter: true }
         console.log('✅ | Models synchronized w/ database');
     } catch (err) {
         console.error('❌ | Synchronized models w/ database', err);
