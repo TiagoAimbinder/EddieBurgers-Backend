@@ -29,6 +29,10 @@ export default (sequelize)  => {
         type: DataTypes.INTEGER, 
         allowNull: true,
       },
+      sal_local: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // O false si es obligatorio
+      }
     },
     {
         sequelize,

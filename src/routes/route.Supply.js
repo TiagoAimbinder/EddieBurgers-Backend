@@ -17,6 +17,8 @@ export class RouteSupply {
     this.routeSupply.get('/getAll', this.SupplyCtr.getAll);
     this.routeSupply.get('/getByID/:sup_id', this.SupplyCtr.getByID);
 
+    this.routeSupply.put('/update/:sup_id', this.SupplyCtr.update);
+
     this.routeSupply.delete('/remove/:sup_id', this.SupplyCtr.remove);
 
     return this.routeSupply;

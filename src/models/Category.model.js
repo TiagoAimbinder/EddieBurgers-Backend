@@ -9,13 +9,18 @@ export default (sequelize)  => {
           autoIncrement: true, 
           allowNull: false, 
       },
+      sec_id: { // <--- NUEVO CAMPO (Foreign Key)
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       cat_name: {
         type: DataTypes.STRING,
         allowNull: false,
-      }, 
-      cat_color: {
-        type: DataTypes.STRING,
-        allowNull: true,
+      },
+      cat_profit_percent: {
+        type: DataTypes.FLOAT, // Usamos FLOAT para decimales (ej: 30.5)
+        allowNull: false,
+        defaultValue: 21, // Valor por defecto si te olvidas de mandarlo
       }
     },
     {

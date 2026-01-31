@@ -27,17 +27,6 @@ import { ManangementWeekService } from "../services/ManangementWeek.service.js";
         res.status(err.statusCode || 500).json({ message: err.message || 'Error al obtener todos los movimientos semanales', code: err.code || '', success: false})
       }
 
-
-      try {
-        // Consulta todos los movimientos de la base de datos
-        const manangement = await ManangementWeek.findAll({ where: { hw_status: 1 } });
-  
-        res.status(200).json({manangement: manangement});
-      } catch (error) {
-  
-        console.error('Error al obtener los movimientos:', error);
-        res.status(500).json({ message: 'Error al obtener los movimientos', error });
-      }
     };
   
     deleteMovement = async (req, res) => {

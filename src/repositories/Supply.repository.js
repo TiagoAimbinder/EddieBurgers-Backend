@@ -36,6 +36,25 @@ export class SupplyRep {
     return found ? found.map((val) => val.dataValues) : null; 
   }
 
+  // Agrega esto dentro de la clase SupplyRep:
+
+update = async ({ sup_id, sup_name, sup_price, isActive }, t = null) => {
+    
+    // Preparamos los datos a actualizar
+    const dataToUpdate = { sup_name, sup_price };
+    
+    // Solo si mandamos isActive, lo agregamos al objeto (para reactivar)
+    if (isActive !== undefined) {
+        dataToUpdate.isActive = isActive;
+    }
+
+    const updated = await this.models.Supply.update(
+      dataToUpdate,
+      { where: { sup_id }, transaction: t }
+    );
+    return updated;
+  };
+
   remove = async ({ sup_id }, t = null) => {
     const removed = await this.models.Supply.update(
       { isActive: false }, 

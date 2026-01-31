@@ -15,6 +15,20 @@ export class CategoryXSupplyRep {
     return created.dataValues;
   }
 
+  // AGREGAR ESTO EN: src/repositories/CategoryXSupply.repository.js
+
+  findByCategoryAndSupply = async ({ cat_id, sup_id }, t = null) => {
+    const found = await this.models.CategoryXSupply.findOne({
+      where: { 
+          cat_id: cat_id, 
+          sup_id: sup_id 
+      },
+      transaction: t
+    });
+
+    return found ? found.dataValues : null;
+  }
+
   findByID = async ({ cxs_id }, t = null) => {
     const found = await this.models.CategoryXSupply.findOne({
       where: { cxs_id },

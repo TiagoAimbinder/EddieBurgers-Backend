@@ -23,7 +23,7 @@ export class ManangementWeekRep {
   }
 
   getAll = async (transaction = null) => {
-    const movements = await this.models.ManangementWeekRep.findAll({ where: { hw_status: true }, transaction }); 
+    const movements = await this.models.ManangementWeek.findAll({ where: { hw_status: true }, transaction }); 
     return movements ? movements.map((movement) => movement.dataValues) : null; 
   }; 
 

@@ -14,23 +14,26 @@ export class CategoryController {
   * - ✅ | Delete category 
   */
 
-  createCategory = async (req, res) => {
-    const { usu_id, cat_name, cat_color } = req.body; 
+createCategory = async (req, res) => {
+    // Ahora esperamos sec_id y supplies (array) en el body
+    const { usu_id, cat_name, sec_id, cat_profit_percent, supplies } = req.body; 
 
     try {
-      await this.CategorySrv.create(usu_id, cat_name, cat_color); 
-      res.status(201).json({ message: 'Categoría creada correctamente.', success: true, code: '' });
+      // Pasamos todos los argumentos al servicio
+      await this.CategorySrv.create(usu_id, cat_name, sec_id, cat_profit_percent, supplies); 
+      
+      res.status(201).json({ message: 'Categoría creada con sus insumos correctamente.', success: true });
     } catch (err) {
-      res.status(err.statusCode || 500).json({ message: err.message || 'Error al crear la categoría.', success: false, code: ''});
+      res.status(err.statusCode || 500).json({ message: err.message || 'Error al crear la categoría.', success: false });
     }
   };
 
   updateCategory = async (req, res) => {
-    const { cat_name, cat_color } = req.body;
+    const { cat_name, cat_profit_percent } = req.body;
     const { cat_id, usu_id } = req.params
 
     try {
-      const data = { cat_id, usu_id, cat_name, cat_color }; 
+      const data = { cat_id, usu_id, cat_name,cat_profit_percent }; 
       await this.CategorySrv.update(data);
       res.status(200).json({ message: 'Categoría actualizada correctamente', success: true, code: '' });
     } catch (err) {

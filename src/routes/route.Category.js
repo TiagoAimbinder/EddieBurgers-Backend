@@ -12,7 +12,7 @@ export class RouteCategory {
   }
 
   routesInit = () => {
-    this.routeCategory.post('/create', authJWT, this.CategoryReq.validateCreate, this.CategoryCtr.createCategory);
+    this.routeCategory.post('/create', this.CategoryReq.validateCreate, this.CategoryCtr.createCategory);
     this.routeCategory.get('/getAll/:usu_id', authJWT, this.CategoryReq.validateGetAll, this.CategoryCtr.getAllCategories);
     this.routeCategory.put('/update/:cat_id/:usu_id', authJWT, this.CategoryReq.validateUpdate, this.CategoryCtr.updateCategory);
     this.routeCategory.delete('/delete/:cat_id/:usu_id', authJWT, this.CategoryReq.validateDelete, this.CategoryCtr.deleteCategory);

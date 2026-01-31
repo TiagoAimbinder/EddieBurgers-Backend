@@ -29,6 +29,7 @@ export class ManangementWeekService {
       try {
         const movements = await this.ManangementWeekRep.getAll();
         if (!movements) throw { message: "No existen movimientos.", statusCode: 404 }; 
+        return movements;
       } catch (err) {
         throw err; 
       }
@@ -71,35 +72,53 @@ export class ManangementWeekService {
       } 
     }
 
-    goToGeneral = async (usu_id) => {
-      const transaction = await this.sequelize.transaction();
-      
-      try {
-        const user = await this.UserRep.findByID(usu_id, transaction)
-        if (!user) throw { message: 'El usuario no existe.', statusCode: 404, code: '' }
-        if (Number(usu_id) !== 5) throw { message: 'No tiene permisos para realizar esta accion', statusCode: 403, code: ''};
-
-        const tempExpenses = await this.ManangementWeekRep.getAll(transaction)
+goToGeneral = async (usu_id) => {
+    const transaction = await this.sequelize.transaction();
     
-        const generalExpensesData = tempExpenses.map(expense => ({
-          his_amount: expense.hw_amount,
-          his_description: expense.hw_description,
-          his_type: expense.hw_type,
-          his_date: expense.hw_date,
-          his_status: expense.hw_status,
-          usu_id: expense.usu_id,
-          cur_id: expense.cur_id,
-        }));
+    try {
+      // 1. Validaciones de Usuario
+      const user = await this.UserRep.findByID(usu_id, transaction)
+      if (!user) throw { message: 'El usuario no existe.', statusCode: 404, code: '' }
+      
+      // Nota: Asegúrate de que este ID 5 es correcto para tu lógica de admin
+      if (Number(usu_id) !== 5) throw { message: 'No tiene permisos para realizar esta accion', statusCode: 403, code: ''};
 
-        await this.ManangementRep.bulkCreate(generalExpensesData, transaction); 
-        await this.ManangementWeekRep.deleteAll(transaction);
-        
-        await transaction.commit();
-      } catch (error) {
-        await transaction.rollback();
-        throw err; 
+      // 2. Obtener gastos semanales
+      const tempExpenses = await this.ManangementWeekRep.getAll(transaction);
+  
+      // BLINDAJE: Si no hay gastos, cancelamos operación sin error
+      if (!tempExpenses || tempExpenses.length === 0) {
+          await transaction.commit(); // Cerramos transacción limpia
+          return { message: "No había datos para migrar." };
       }
-    };
+
+      // 3. Mapear datos
+      const generalExpensesData = tempExpenses.map(expense => ({
+        his_amount: expense.hw_amount,
+        his_description: expense.hw_description,
+        his_type: expense.hw_type,
+        his_date: expense.hw_date,
+        his_status: expense.hw_status, // Asegúrate de que el historial general acepte booleanos o 1/0
+        usu_id: expense.usu_id,
+        cur_id: expense.cur_id,
+      }));
+
+      // 4. Insertar en Historial General
+      // CORRECCIÓN: Usamos 'insertData' que es como lo llamaste en tu Repo
+      await this.ManangementRep.insertData(generalExpensesData, transaction); 
+
+      // 5. Borrar tabla semanal
+      await this.ManangementWeekRep.deleteAll(transaction);
+      
+      await transaction.commit();
+      return { message: "Migración exitosa" };
+
+    } catch (error) { // Usamos 'error' consistentemente
+      console.error("Error en migración:", error); // Log para ver el error real
+      await transaction.rollback();
+      throw error; // Lanzamos 'error', no 'err'
+    }
+  };
   
 };
   

@@ -1,7 +1,7 @@
 import { Database } from '../config/db.js'
 import { CategoryRep } from '../repositories/Category.repository.js';
 import { UserRep } from '../repositories/User.repository.js';
-
+// Borramos el import de CategoryXSupplyModel porque ya usamos this.models
 
 export class CategorySrv {
 
@@ -11,40 +11,56 @@ export class CategorySrv {
   }
 
   get sequelize() { return Database.sequelize }
+  get models() { return Database.models }
 
-  create = async (usu_id, cat_name, cat_color) =>  {
+  /**
+   * Crea una categoría, la asigna a una sección y guarda sus insumos.
+   */
+  create = async (usu_id, cat_name, sec_id, cat_profit_percent, suppliesList = []) =>  {
 
     const transaction = await this.sequelize.transaction();
 
     try {
+      // 1. Validar Usuario
       const user = await this.UserRep.findByID(usu_id, transaction);
-      if (!user) throw { statusCode: 404, message: 'El usuario no existe', code: '' }
+      if (!user) throw { statusCode: 404, message: 'El usuario no existe' }
 
-      // ⚠️ | ALL USERS CAN CREATE CATEGORIES
-      // if (user.role_id !== 1) throw { statusCode: 401, message: 'El usuario no tiene permisos para crear categorías', code: '' };
+      // 2. Validar que la Sección exista
+      const section = await this.models.Section.findByPk(sec_id, { transaction });
+      if (!section) throw { statusCode: 404, message: 'La sección indicada no existe' };
 
-      /**
-       * Find category by name, If exist throw error
-       * @param { String } cat_name
-       */
+      // 3. Validar Nombre duplicado
       const catByName = await this.CategoryRep.findByName(cat_name, transaction);
-      if (catByName) throw { statusCode: 400, message: 'Ya existe una categoría con ese nombre', code: '' };
+      if (catByName) throw { statusCode: 400, message: 'Ya existe una categoría con ese nombre' };
 
-      /**
-       * Create category
-       * @param { String } cat_name
-       * @param { String } cat_color
-       */
-      const color = cat_color === null ? "#FFFFFF" : cat_color;
-      await this.CategoryRep.create({ cat_name, cat_color: color }, transaction);
+      // 4. CREAR LA CATEGORÍA
+      const newCategory = await this.CategoryRep.create({ 
+          cat_name, 
+          sec_id, 
+          cat_profit_percent: cat_profit_percent || 30 
+      }, transaction);
+
+      // 5. GUARDAR LOS INSUMOS (Si hay lista)
+      if (suppliesList && suppliesList.length > 0) {
+          const ingredientsData = suppliesList.map(item => ({
+              cat_id: newCategory.cat_id,
+              sup_id: item.sup_id,
+              cxs_quantity: item.quantity || 1 
+          }));
+
+          await this.models.CategoryXSupply.bulkCreate(ingredientsData, { transaction });
+      }
 
       await transaction.commit();
+      return newCategory;
     }
     catch (err) {
       await transaction.rollback()
       throw err; 
     }
   }; 
+
+  // --- ELIMINÉ EL "};" QUE ESTABA AQUÍ CORTANDO LA CLASE ---
 
   update = async (data) => {
 
@@ -54,22 +70,18 @@ export class CategorySrv {
       const user = await this.UserRep.findByID(data.usu_id, transaction);
       if (!user) throw { statusCode: 404, message: 'El usuario no existe', code: '' }
 
-      // ⚠️ | ALL USERS CAN UPDATE CATEGORIES
-      // if (user.role_id !== 1) throw { statusCode: 401, message: 'El usuario no tiene permisos para crear categorías', code: '' };
-
-      /**
-       * Find category by name, If doesn't exist throw error
-       * @param {Int} cat_id
-       */
       const category = await this.CategoryRep.findByID(data.cat_id, transaction);
       if (!category) throw { message: 'La categoría no existe', statusCode: 404, code: '' }
 
-      /** 
-       * cat_color validation. If data.cat_color is null, then use the previous value.
-       * @param {String} cat_color
-       */
-      const cat_color = data.cat_color === null ? category.cat_color : data.cat_color;
-      const cat = { cat_id: data.cat_id, cat_name: data.cat_name, cat_color: cat_color }
+      const cat_profit_percent = (data.cat_profit_percent === null || data.cat_profit_percent === undefined) 
+                                 ? category.cat_profit_percent 
+                                 : data.cat_profit_percent;
+
+      const cat = { 
+          cat_id: data.cat_id, 
+          cat_name: data.cat_name, 
+          cat_profit_percent: cat_profit_percent 
+      };
 
       await this.CategoryRep.update(cat, transaction); 
 
@@ -85,9 +97,6 @@ export class CategorySrv {
     try {
       const user = await this.UserRep.findByID(usu_id);
       if (!user) throw { statusCode: 404, message: 'El usuario no existe', code: '' }
-
-      // ⚠️ | ALL USERS CAN GET ALL CATEGORIES
-      // if (user.role_id !== 1) throw { statusCode: 401, message: 'El usuario no tiene permisos para crear categorías', code: '' };
 
       const categories = await this.CategoryRep.getAll();
       if (!categories || categories.length === 0 ) throw { statusCode: 404, message: 'No se encontraron categorías', code: '' }
@@ -105,9 +114,6 @@ export class CategorySrv {
       const user = await this.UserRep.findByID(usu_id, transaction); 
       if (!user) throw { statusCode: 404, message: 'El usuario no existe', code: '' }
 
-      // ⚠️ | ALL USERS CAN DELETE CATEGORIES
-      // if (user.role_id !== 1) throw { statusCode: 401, message: 'El usuario no tiene permisos para crear categorías', code: '' };
-
       const category = await this.CategoryRep.findByID(cat_id, transaction);
       if (!category) throw { statusCode: 404, message: 'La categoría no existe', code: '' }; 
 
@@ -118,5 +124,5 @@ export class CategorySrv {
       await transaction.rollback();
       throw err
     }
-  }
-}; 
+  };
+};

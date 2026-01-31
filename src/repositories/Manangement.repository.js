@@ -21,7 +21,7 @@ export class ManangementRep {
     }
 
     getAll = async () => {
-        const movs = this.models.ManangementHistory.findAll({ where: { his_status: 1 } })
+        const movs = await this.models.ManangementHistory.findAll({ where: { his_status: 1 } })
         return movs.map( (mov) => mov.dataValues)
     }
 
