@@ -30,10 +30,10 @@ export class SaleHistoryMiddleware {
     next();
   }
 
-  ValidateUsuId = (req, res, next) => {
-    const { error } = SaleHistoryMiddleware.UsuIdSchema.validate(req.query);
-    if (error) { 
-      return res.status(400).json({ message: error.details[0].message });
+  ValidateUsuId(req, res, next) {
+    const { usu_id } = req.query;
+    if (!usu_id || isNaN(usu_id)) {
+      return res.status(400).json({ success: false, message: 'Invalid user ID' });
     }
     next();
   }

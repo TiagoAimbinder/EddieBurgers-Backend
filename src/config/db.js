@@ -109,5 +109,4 @@ export class Database {
         console.error('❌ | Synchronized models w/ database', err);
     }
   };
-
-};  
+}

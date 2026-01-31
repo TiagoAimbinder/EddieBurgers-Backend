@@ -49,7 +49,6 @@ export class ExpensesRequest {
 
   validateDelete = (req, res, next) => {
     const { error } = this.paramsSchema.validate(req.params);
-    console.log('req params: ', req.params);
     if (error) {
       return res.status(400).json({ message: paramsError.details[0].message });
     }

@@ -10,7 +10,7 @@ export class AuthCtr {
     login = async (req, res) => {
         const { usu_name, usu_password } = req.body;
 
-        // try {
+        try {
             const user = { usu_name, usu_password }; 
             const data = await this.AuthSrv.login(user);
             res.status(200).json({ message: 'Usuario logeado correctamente', success: true, usu_token: data.token, usu_id: data.usu_id, role_id: data.role_id});
@@ -22,6 +22,7 @@ export class AuthCtr {
     validateToken = async (req, res) => { 
         const { usu_id } = req.body;
         const authHeader = req.headers.authorization; 
+
 
         try {
             await this.AuthSrv.validateToken(usu_id, authHeader);

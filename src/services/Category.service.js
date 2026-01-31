@@ -67,6 +67,7 @@ export class CategorySrv {
     const transaction = await this.sequelize.transaction();
 
     try {
+
       const user = await this.UserRep.findByID(data.usu_id, transaction);
       if (!user) throw { statusCode: 404, message: 'El usuario no existe', code: '' }
 
@@ -86,6 +87,7 @@ export class CategorySrv {
       await this.CategoryRep.update(cat, transaction); 
 
       await transaction.commit();
+
     }
     catch (err) {
       await transaction.rollback()

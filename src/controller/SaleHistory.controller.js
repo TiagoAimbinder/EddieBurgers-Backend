@@ -17,6 +17,7 @@ export class SaleHistoryController {
       
       await this.SaleHistorySrv.create(data);
       res.status(200).json({ message: 'Venta creada exitosamente.', success: true, code: ''});
+
     } catch (err) {
       res.status(err.statusCode || 500).json({ message: err.message || 'Error al crear la venta.', success: false, code: err.code || ''}); 
     }

@@ -64,10 +64,10 @@ monthlySales = async (month, year) => {
             SELECT 
             -- 1. TOTAL GENERAL
             SUM(CASE 
-                    WHEN sal_type = 1 THEN sal_quantity
-                    WHEN sal_type = 2 THEN -sal_quantity
-                    ELSE 0
-                END) AS total_general,
+                WHEN sal_type = 1 THEN sal_quantity
+                WHEN sal_type = 2 THEN -sal_quantity
+                ELSE 0
+            END) AS total_general,
         
             -- 2. TOTAL MENSUAL
             SUM(CASE 

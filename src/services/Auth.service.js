@@ -5,6 +5,7 @@ import { JWTSrv } from '../services/Jwt.service.js';
 import { UserRep } from '../repositories/User.repository.js';
 import { LogHistoryRep } from '../repositories/LogHistory.repository.js';
 import { Database } from '../config/db.js';
+import jwt from 'jsonwebtoken'
 
 
 export class AuthSrv { 
@@ -72,6 +73,12 @@ export class AuthSrv {
                 await this.UserRep.updateToken(usu_id, null);
                 throw { message: 'El token ingresado no coincide con el token registrado', statusCode: 400, code: '' };
             }
+            jwt.verify(usu_token, process.env.SECRET_KEY, async (err, decoded) => { 
+                if (err) {
+                    throw { message: 'El token no es valido', statusCode: 400, code: '' };
+
+                }
+            });
         } catch (err) {
             throw err;             
         }

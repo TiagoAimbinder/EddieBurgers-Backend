@@ -36,6 +36,7 @@ createCategory = async (req, res) => {
       const data = { cat_id, usu_id, cat_name,cat_profit_percent }; 
       await this.CategorySrv.update(data);
       res.status(200).json({ message: 'Categoría actualizada correctamente', success: true, code: '' });
+
     } catch (err) {
       res.status(err.statusCode || 500).json({ message: err.message || 'Error al actualizar la categoría', success: false, code: '' })
     }
