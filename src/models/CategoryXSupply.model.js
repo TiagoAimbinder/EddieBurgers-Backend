@@ -1,33 +1,33 @@
 import { DataTypes, Model } from 'sequelize'; 
 
 export default (sequelize)  => {
-    class Category extends Model {}
-    Category.init({
-      cat_id: {
+    class CategoryXSupply extends Model {}
+    CategoryXSupply.init({
+      cxs_id: {
           type: DataTypes.INTEGER,
           primaryKey: true, 
           autoIncrement: true, 
           allowNull: false, 
       },
-      sec_id: { // <--- NUEVO CAMPO (Foreign Key)
+      sup_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      }, 
+      cat_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      cat_name: {
-        type: DataTypes.STRING,
+      cxs_quantity: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-      },
-      cat_profit_percent: {
-        type: DataTypes.FLOAT, // Usamos FLOAT para decimales (ej: 30.5)
-        allowNull: false,
-        defaultValue: 21, // Valor por defecto si te olvidas de mandarlo
+        defaultValue: 1,
       }
     },
     {
         sequelize,
-        modelName: 'category',
+        modelName: 'CategoryXSupply',
         timestamps: true, 
     });
 
-    return Category; 
+    return CategoryXSupply; 
 }

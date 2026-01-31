@@ -20,10 +20,9 @@ export class ManangementService {
     }
   };
 
-  getAll = async () => {
+getAll = async () => {
     try {
-      const movements = await this.ManangementRep.getAll();
-      return movements
+      return await this.ManangementRep.getAll();
     } catch (err) {
       throw err; 
     }

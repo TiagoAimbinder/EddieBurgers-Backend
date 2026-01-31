@@ -6,6 +6,9 @@ import { RouteExpenses } from "./route.Expenses.js";
 import { RouteManangement } from "./route.Manangement.js";
 import { RouteManangementWeek } from "./route.ManangementWeek.js";
 import { RouteSale } from "./route.Sale.js";
+import { RouteSupply } from "./route.Supply.js";
+import { RouteCategoryXSupply } from "./route.CategoryXSupply.js";
+import { RouteSection } from "./route.Section.js";
 
 
 export class RouteIndex {
@@ -19,6 +22,9 @@ export class RouteIndex {
     this.routeManangement = new RouteManangement()
     this.routeManangementWeek = new RouteManangementWeek()
     this.routeSale = new RouteSale()
+    this.routeSupply = new RouteSupply();
+    this.routeCatXSup = new RouteCategoryXSupply();
+    this.routeSection = new RouteSection();
 
     this.routeIndex = Router();
   } 
@@ -31,6 +37,9 @@ export class RouteIndex {
     this.routeIndex.use('/expenses', this.routeExpenses.routesInit());
     this.routeIndex.use('/currency', this.routeCurrency.routesInit());
     this.routeIndex.use('/saleHistory', this.routeSale.routesInit());
+    this.routeIndex.use('/supply', this.routeSupply.routes());
+    this.routeIndex.use('/catXSupply', this.routeCatXSup.routes());
+    this.routeIndex.use('/section', this.routeSection.routesInit());
 
     return this.routeIndex;
   };

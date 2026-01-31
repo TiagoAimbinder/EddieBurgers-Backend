@@ -30,9 +30,9 @@ export default (sequelize)  => {
         allowNull: true,
       },
       sal_local: {
-        type: DataTypes.INTEGER, 
-        allowNull: true,
-      },
+        type: DataTypes.INTEGER,
+        allowNull: true, // O false si es obligatorio
+      }
     },
     {
         sequelize,

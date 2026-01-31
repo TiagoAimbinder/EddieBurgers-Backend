@@ -24,7 +24,7 @@ export class ManangementWeekRep {
 
   getAll = async (transaction = null) => {
     const movements = await this.models.ManangementWeek.findAll({ where: { hw_status: true }, transaction }); 
-    return movements.map( (mov) => mov.dataValues) 
+    return movements ? movements.map((movement) => movement.dataValues) : null; 
   }; 
 
   deleteByID = async (hw_id, transaction = null) => {

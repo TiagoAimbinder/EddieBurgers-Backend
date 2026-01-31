@@ -14,7 +14,7 @@ export class CurrencyController {
   getAll = async (req, res) => {
     try {
       const currencies = await this.CurrencySrv.getAll();
-      res.status(200).json({ message: 'Tipos de moneda obtenidos correctamente', success: true, code: '', data: currencies })
+      res.status(200).json({ message: 'Tipos de moneda obtenidos correctamente', success: true, code: '', currency: currencies })
     } catch (err) {
       res.status(err.statusCode || 500).json({ message: err.message || 'Error al obtener todos los tipos de moneda', success: false, code: '' })
     }

@@ -30,26 +30,30 @@ export class SaleHistoryService {
     }
   }
 
-  monthlySales = async (usu_id) => {
+  monthlySales = async (usu_id, month, year) => {
     try {
       const user = await this.UserRep.findByID(usu_id);
       if (!user) throw { message: 'No existe un usuario registrado con ese ID.', statusCode: 400, code: '' };
-      return await this.SaleHistoryRep.monthlySales();
+      return await this.SaleHistoryRep.monthlySales(month, year);
     } catch (err) {
       throw err;       
     }
   }
 
-  getTotals = async (usu_id, sal_local) => {
+  // Aceptamos el segundo parámetro
+  getTotals = async (usu_id, sal_local, month, year) => {
     try {
       const user = await this.UserRep.findByID(usu_id);
+      
+      // SI ESTO FALLA, REVISA TU TABLA DE USUARIOS. EL ID 12 DEBE EXISTIR.
       if (!user) throw { message: 'No existe un usuario registrado con ese ID.', statusCode: 400, code: '' };
-  
-      // Llamada a la función totals de SaleHistoryRep
-      return await this.SaleHistoryRep.totals(sal_local);
+      
+      // Pasamos el local al repositorio
+      return await this.SaleHistoryRep.totals(sal_local, month, year);
     } catch (err) {
       throw err;       
     }
-  };
-  
+  }
 }
+
+
